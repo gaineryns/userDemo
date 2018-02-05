@@ -1,0 +1,50 @@
+security:
+    # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
+
+    encoders:
+        App\Entity\User: bcrypt
+
+    providers:
+        #in_memory: { memory: ~ }
+        database_users:
+            entity: { class: App\Entity\User, property: username }
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+        main:
+            #anonymous: ~
+            pattern: ^/
+
+            anonymous: true
+
+            form_login:
+                #le nom de la route de la page de connexion
+                check_path: security_login
+                #le nom de la route où se trouve le formulaire de connexion
+                #Si un utilisateur tente d'accéder à une page protégée sans en avoir les droits
+                #il sera redirigé sur cette page
+                login_path: security_login
+                #securisation des formulaires
+                csrf_token_generator: security.csrf.token_manager
+                #la page par defaut après une connexion réussie
+                default_target_path: admin
+            logout:
+                #la route où se trouve le process de deconnexion
+                path: security_logout
+                #la route sur laquelle doit être rediriger l'utilisateur après deconnexion
+                target: index
+
+    access_control:
+        #les rgles de sécurité
+        #là dans ce cas seul les utilisateurs ayant le role ROLE_ADMIN
+        #peuvent accéder à toutes les pages commençant par /admin
+        - { path: '^/admin', roles: ROLE_ADMIN }
+
+            # activate different ways to authenticate
+
+            # http_basic: ~
+            # https://symfony.com/doc/current/security.html#a-configuring-how-your-users-will-authenticate
+
+            # form_login: ~
+            # https://symfony.com/doc/current/security/form_login_setup.html
